@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase";
 import { useToast } from "./Toast";
@@ -24,9 +25,9 @@ export default function AuthForm() {
 
     setBusy(true);
     if (mode === "signup") {
-      const { data, error } = await sb.auth.signUp({ email, password, options: { data: { username } } });
+      const { data, error } = await sb.auth.signUp({ email, password, options: { data: { username }, emailRedirectTo: `${window.location.origin}/profile` } });
       if (error) toast(error.message);
-      else if (!data.session) toast("Перевір пошту і підтверди акаунт");
+      else if (!data.session) toast("Ми надіслали лист — підтверди пошту і повертайся");
       else toast("Ласкаво просимо в SHO ZA MEM!");
     } else {
       const { error } = await sb.auth.signInWithPassword({ email, password });
@@ -75,6 +76,13 @@ export default function AuthForm() {
       <button type="submit" className="btn btn-yellow btn-block" disabled={busy}>
         {busy ? "Зачекай..." : mode === "signup" ? "Створити акаунт" : "Увійти"}
       </button>
+
+      {mode === "signup" && (
+        <p className="muted" style={{ textAlign: "center", fontSize: 13, margin: 0 }}>
+          Реєструючись, ти погоджуєшся з <Link href="/rules" className="link">Правилами</Link> і{" "}
+          <Link href="/privacy" className="link">Конфіденційністю</Link>
+        </p>
+      )}
     </form>
   );
 }

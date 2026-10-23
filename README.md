@@ -14,9 +14,19 @@ npm run dev → http://localhost:3000
    Table Editor → profiles → твій рядок → trusted = true, is_admin = true → Save.
 
 ## Модерація
-Table Editor → memes → фільтр status = pending.
-Хороший мем → status = approved. Поганий → rejected.
-Мем із 3 скаргами автоматично стає hidden — перевір і поверни approved або залиш.
+Кабінет → «Модерація мемів» (видно лише адмінам, is_admin = true).
+Там: на перевірці / скарги / опубліковані, кнопки Опублікувати / Відхилити / Сховати,
+а також «Довіряти автору» — його меми йтимуть без перевірки.
+Мем із 3 скаргами автоматично ховається до перевірки.
+
+## Оновлення 3
+Supabase → SQL Editor → запусти supabase/migration-3.sql.
+Впиши свою пошту в lib/site.ts.
+
+## Підтвердження пошти (перед запуском для всіх)
+1. Authentication → URL Configuration → Site URL = посилання з Vercel.
+2. Redirect URLs → додай: https://ТВІЙ-САЙТ.vercel.app/** і http://localhost:3000/**
+3. Authentication → Sign In / Providers → Email → увімкни "Confirm email".
 
 ## Vercel
 Settings → Environment Variables → додай ті самі два рядки з .env.local:

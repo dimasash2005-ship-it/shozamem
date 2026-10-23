@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { rowToMeme, type Meme } from "@/lib/memes";
 import { supabaseBrowser } from "@/lib/supabase";
 import { useUser } from "@/lib/useUser";
@@ -24,15 +25,26 @@ const SELECT = "*, profiles!memes_user_id_fkey(username)";
 export default function ProfileView() {
   const user = useUser();
   const toast = useToast();
+  const router = useRouter();
   const [tab, setTab] = useState<Tab>("mine");
   const [username, setUsername] = useState<string>("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [mine, setMine] = useState<MyMeme[]>([]);
   const [saved, setSaved] = useState<Meme[]>([]);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const sb = supabaseBrowser();
     if (!sb || !user) return;
-    sb.from("profiles").select("username").eq("id", user.id).maybeSingle().then(({ data }) => setUsername(data?.username ?? ""));
+    sb.from("profiles")
+      .select("username, is_admin")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        setUsername(data?.username ?? "");
+        setIsAdmin(Boolean(data?.is_admin));
+      });
     sb.from("memes")
       .select(SELECT)
       .eq("user_id", user.id)
@@ -60,22 +72,43 @@ export default function ProfileView() {
     toast("Ти вийшов з акаунта");
   };
 
+  const deleteAccount = async () => {
+    const sb = supabaseBrowser();
+    if (!sb) return;
+    setDeleting(true);
+    try {
+      // 1. Прибираємо всі свої файли
+      const { data: files } = await sb.storage.from("memes").list(user.id, { limit: 1000 });
+      if (files && files.length > 0) {
+        await sb.storage.from("memes").remove(files.map((f) => `${user.id}/${f.name}`));
+      }
+      // 2. Видаляємо акаунт (разом з мемами, лайками і збереженим)
+      const { error } = await sb.rpc("delete_my_account");
+      if (error) throw error;
+      await sb.auth.signOut();
+      toast("Акаунт видалено. Дякуємо, що був з нами!");
+      router.push("/");
+    } catch (err) {
+      toast(`Не вийшло: ${(err as { message?: string })?.message ?? "спробуй ще раз"}`);
+      setDeleting(false);
+    }
+  };
+
   return (
     <main className="screen">
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h1 className="h1 display" style={{ fontSize: 22 }}>Кабінет</h1>
-        <button className="btn btn-ghost" style={{ minHeight: 44, fontSize: 14, padding: "0 16px" }} onClick={signOut}>
-          Вийти
-        </button>
+        <button className="btn btn-ghost btn-sm" onClick={signOut}>Вийти</button>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+      <section className="profile-card">
         <div className="avatar" aria-hidden="true">{(username[0] ?? "?").toUpperCase()}</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0 }}>
           <strong style={{ fontSize: 20 }}>@{username || "…"}</strong>
-          <span className="muted" style={{ fontSize: 13 }}>{user.email}</span>
+          <span className="muted" style={{ fontSize: 13, overflow: "hidden", textOverflow: "ellipsis" }}>{user.email}</span>
+          {isAdmin && <span className="pill pill-blue">Адмін</span>}
         </div>
-      </div>
+      </section>
 
       <div className="grid-3">
         <div className="stat"><b>{mine.length}</b><span className="muted" style={{ fontSize: 12 }}>мої меми</span></div>
@@ -87,15 +120,20 @@ export default function ProfileView() {
         <IconPlus size={20} /> Додати мем
       </Link>
 
+      {isAdmin && (
+        <Link href="/admin" className="btn btn-blue btn-block">Модерація мемів</Link>
+      )}
+
       <div className="segmented" style={{ gridTemplateColumns: "1fr 1fr" }} role="group" aria-label="Мої розділи">
         <button aria-pressed={tab === "mine"} onClick={() => setTab("mine")}>Мої меми</button>
         <button aria-pressed={tab === "saved"} onClick={() => setTab("saved")}>Збережене</button>
       </div>
 
       {items.length === 0 ? (
-        <p className="muted" style={{ textAlign: "center", padding: "20px 8px" }}>
-          {tab === "mine" ? "Ти ще не додав жодного мему" : "Тут зʼявляться меми, які ти збережеш"}
-        </p>
+        <div className="empty">
+          <strong>{tab === "mine" ? "Поки порожньо" : "Нічого не збережено"}</strong>
+          <span className="muted">{tab === "mine" ? "Додай свій перший мем — це 30 секунд" : "Тисни закладку на мемі, і він зʼявиться тут"}</span>
+        </div>
       ) : (
         <div className="grid-3">
           {items.map((m) => {
@@ -119,6 +157,24 @@ export default function ProfileView() {
               <Link key={m.id} href={`/meme/${m.id}`} className="tile" style={{ background: bg, height: 120, position: "relative" }}>{body}</Link>
             );
           })}
+        </div>
+      )}
+
+      <nav className="menu" aria-label="Інформація">
+        <Link href="/rules">Правила</Link>
+        <Link href="/privacy">Конфіденційність</Link>
+      </nav>
+
+      {!confirmDelete ? (
+        <button className="btn btn-link" onClick={() => setConfirmDelete(true)}>Видалити акаунт</button>
+      ) : (
+        <div className="card" style={{ borderColor: "var(--red)" }}>
+          <strong>Видалити акаунт назавжди?</strong>
+          <span className="muted">Зникнуть усі твої меми, файли, лайки і збережене. Повернути не вийде.</span>
+          <div className="grid-2">
+            <button className="btn btn-ghost" onClick={() => setConfirmDelete(false)} disabled={deleting}>Скасувати</button>
+            <button className="btn btn-danger" onClick={deleteAccount} disabled={deleting}>{deleting ? "Видаляю..." : "Видалити"}</button>
+          </div>
         </div>
       )}
     </main>

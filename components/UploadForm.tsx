@@ -174,7 +174,7 @@ export default function UploadForm() {
 
       <label className="check">
         <input type="checkbox" checked={allowed} onChange={(e) => setAllowed(e.target.checked)} />
-        Це мій мем або автор не проти, що він тут буде. Без насильства, 18+ і реклами.
+        <span>Це мій мем або автор не проти, що він тут буде. Мем відповідає <Link href="/rules" className="link">Правилам</Link>.</span>
       </label>
 
       <button type="submit" className="btn btn-yellow btn-block display" style={{ minHeight: 56, fontSize: 17 }} disabled={!!step}>
