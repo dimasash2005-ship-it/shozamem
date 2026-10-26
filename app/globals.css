@@ -210,3 +210,169 @@ button { cursor: pointer; }
 .toast { animation: toast-in 0.2s ease; }
 @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* ---------- Оновлення 4: стрічка, пошук, автори ---------- */
+.feed-top { flex-wrap: wrap; gap: 8px; }
+.tabs button { padding: 0 11px; font-size: 13px; }
+.slide-media { cursor: pointer; }
+.mute-btn {
+  position: absolute; z-index: 3; top: 76px; right: 14px; width: 44px; height: 44px; border-radius: 999px; border: none;
+  background: rgba(14,14,16,0.6); color: var(--text); display: flex; align-items: center; justify-content: center;
+}
+.heart-burst {
+  position: absolute; left: 50%; top: 50%; color: var(--red); pointer-events: none;
+  animation: heart 0.7s ease forwards; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.5));
+}
+.heart-burst svg { fill: currentColor; }
+@keyframes heart {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+  25% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+  60% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -70%) scale(0.9); }
+}
+.rail .liked svg { fill: currentColor; }
+.rail-author { position: relative; margin-bottom: 12px; }
+.avatar-sm {
+  width: 50px; height: 50px; border-radius: 999px; background: var(--yellow); color: #0e0e10; border: 3px solid var(--text);
+  display: flex; align-items: center; justify-content: center; font-family: var(--font-display), sans-serif; font-weight: 900; font-size: 20px;
+}
+.rail .follow-dot {
+  position: absolute; left: 50%; bottom: -10px; transform: translateX(-50%); width: 24px; height: 24px; border-radius: 999px;
+  background: var(--blue); color: #fff; box-shadow: none;
+}
+.rail .follow-dot.on { background: var(--text); color: #0e0e10; }
+.author-link { font-weight: 700; font-size: 15px; }
+.pill-glass { background: rgba(245,245,240,0.16); color: var(--text); font-weight: 600; backdrop-filter: blur(6px); }
+.hint { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(245,245,240,0.7); }
+.progress { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: rgba(245,245,240,0.18); z-index: 3; }
+.progress > span { display: block; height: 100%; width: 0; background: var(--yellow); border-radius: 0 999px 999px 0; }
+.feed-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px; }
+
+.filter-btn { width: 52px; height: 52px; }
+.filter-btn.on { background: var(--yellow); color: #0e0e10; border-color: var(--yellow); }
+.chips-scroll { overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+.chips-scroll::-webkit-scrollbar { display: none; }
+.chips-scroll .chips { flex-wrap: nowrap; }
+.chips-scroll .chip { flex: 0 0 auto; }
+.section-head { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+.section-head .h2 { display: flex; align-items: center; gap: 6px; }
+.hscroll { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px 4px; scroll-snap-type: x mandatory; }
+.hscroll::-webkit-scrollbar { display: none; }
+.hscroll > div { scroll-snap-align: start; }
+.mtile {
+  position: relative; display: flex; flex-direction: column; justify-content: space-between; padding: 10px;
+  border-radius: 24px; overflow: hidden; color: var(--text);
+}
+.mtile-top { display: flex; }
+.mtile-bottom { display: flex; flex-direction: column; gap: 2px; }
+.mtile-bottom strong { font-size: 14px; line-height: 1.2; }
+.mtile-bottom span { font-size: 11px; color: rgba(245,245,240,0.75); }
+.masonry { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: start; }
+.masonry > div { display: flex; flex-direction: column; gap: 10px; }
+.rank {
+  width: 40px; height: 40px; flex: 0 0 auto; border-radius: 999px; background: var(--blue); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-family: var(--font-display), sans-serif; font-weight: 900;
+}
+
+/* ---------- Оновлення 5: меню, аватари, коментарі, плавна стрічка ---------- */
+.feed-scroll { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+.feed-top { align-items: center; }
+.feed-top .tabs { flex: 1 1 auto; justify-content: center; max-width: 260px; }
+.slide { contain: layout paint; }
+.slide-backdrop {
+  position: absolute; inset: -40px; background-size: cover; background-position: center;
+  filter: blur(36px) brightness(0.55) saturate(1.2); transform: scale(1.1);
+}
+.slide-media video {
+  object-fit: contain; opacity: 0; transition: opacity 0.35s ease;
+}
+.slide-media video.ready { opacity: 1; }
+.slide-text { position: relative; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.progress > span { width: 100% !important; transform: scaleX(0); transform-origin: left; transition: transform 0.25s linear; }
+
+/* Компактніші кнопки справа */
+.rail { gap: 4px; right: 10px; bottom: 104px; }
+.rail button { width: 46px; height: 46px; }
+.rail .label { font-size: 11px; margin-bottom: 6px; }
+.rail-author { margin-bottom: 14px; }
+.rail .follow-dot { width: 22px; height: 22px; bottom: -9px; }
+.mute-btn { width: 40px; height: 40px; top: 80px; right: 12px; }
+
+.dots-btn {
+  width: 40px; height: 40px; flex: 0 0 auto; border-radius: 999px; border: none;
+  background: rgba(14,14,16,0.6); color: var(--text); display: flex; align-items: center; justify-content: center;
+}
+.screen .dots-btn { background: var(--surface); border: 1px solid var(--line); width: 44px; height: 44px; }
+
+/* Аватари */
+.avatar-any {
+  flex: 0 0 auto; border-radius: 999px; overflow: hidden; background: var(--yellow); color: #0e0e10;
+  display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-display), sans-serif; font-weight: 900;
+}
+.avatar-any img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avatar-any.ring { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--yellow); }
+.avatar-picker { display: flex; flex-direction: column; align-items: center; gap: 12px; cursor: pointer; padding-top: 6px; }
+
+/* Панель знизу */
+.sheet-root { position: fixed; inset: 0; z-index: 60; display: flex; align-items: flex-end; justify-content: center; }
+.sheet-backdrop { position: absolute; inset: 0; border: none; background: rgba(0,0,0,0.55); animation: fade-in 0.2s ease; }
+.sheet {
+  position: relative; width: 100%; max-width: 480px; max-height: 82dvh; display: flex; flex-direction: column;
+  background: #141417; border: 1px solid var(--line); border-bottom: none; border-radius: 30px 30px 0 0;
+  padding: 8px 16px calc(16px + env(safe-area-inset-bottom)); animation: sheet-up 0.26s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.sheet-tall { height: 78dvh; }
+.sheet-grip { width: 44px; height: 5px; border-radius: 999px; background: var(--line); margin: 4px auto 6px; }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; padding: 4px 0 10px; }
+.sheet-head strong { font-size: 17px; }
+.sheet-body { display: flex; flex-direction: column; gap: 14px; overflow-y: auto; flex: 1 1 auto; min-height: 0; }
+@keyframes sheet-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.menu button, .menu a { width: 100%; border: none; background: transparent; color: var(--text); font-family: inherit; }
+.menu button { min-height: 54px; font-weight: 700; font-size: 15px; }
+.menu button + a, .menu a + button, .menu button + button { border-top: 1px solid var(--line); }
+.menu .danger { color: var(--red); }
+
+/* Перегляд перед скачуванням */
+.dl-preview { position: relative; height: 300px; border-radius: 24px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.dl-preview video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+.dl-audio { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px; text-align: center; width: 100%; }
+.dl-audio audio { width: 100%; }
+.dl-audio-icon { width: 72px; height: 72px; border-radius: 999px; background: var(--blue); color: #fff; display: flex; align-items: center; justify-content: center; }
+.segmented button:disabled { opacity: 0.35; }
+
+/* Коментарі */
+.comments { display: flex; flex-direction: column; gap: 14px; flex: 1 1 auto; overflow-y: auto; min-height: 0; }
+.comment { display: flex; gap: 10px; align-items: flex-start; }
+.comment-form { display: flex; gap: 8px; padding-top: 4px; }
+.send-btn { width: 52px; height: 52px; background: var(--yellow); color: #0e0e10; border-color: var(--yellow); }
+.send-btn:disabled { opacity: 0.4; }
+.sheet-tall .sheet-body { overflow: hidden; }
+
+/* Трохи компактніші кнопки загалом */
+.btn { min-height: 48px; font-size: 15px; }
+.btn-stack { min-height: 58px; }
+.icon-btn { width: 44px; height: 44px; }
+
+/* ---------- Кнопки прямо на відео, без окремої панелі ---------- */
+.rail { right: 6px; gap: 2px; }
+.rail button,
+.rail .yellow,
+.rail .blue {
+  background: transparent;
+  box-shadow: none;
+  color: var(--text);
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
+}
+.rail .yellow { color: var(--yellow); }
+.rail .liked { color: var(--red); }
+.rail .label { text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8); }
+.rail .follow-dot { background: var(--blue); color: #fff; filter: none; }
+.rail .follow-dot.on { background: var(--text); color: #0e0e10; }
+.mute-btn { background: transparent; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7)); }
+
+/* ---------- Відео на весь екран, без рамок по боках ---------- */
+.slide-media video { object-fit: cover; }
+.slide-backdrop { display: none; }
+.slide-info { right: 0; padding-right: 78px; }

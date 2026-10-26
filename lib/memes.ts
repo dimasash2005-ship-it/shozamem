@@ -22,6 +22,11 @@ export type Meme = {
   videoExt: string;
   audioExt: string;
   real: boolean; // true = мем з бази, false = тестовий
+  userId: string | null;
+  username: string | null;
+  displayName: string | null;
+  avatar: string | null;
+  comments: number;
 };
 
 export const CATEGORIES: { id: Category | "all"; label: string }[] = [
@@ -83,6 +88,11 @@ export const MEMES: Meme[] = SEEDS.map((s) => ({
   videoExt: "mp4",
   audioExt: "mp3",
   real: false,
+  userId: null,
+  username: null,
+  displayName: null,
+  avatar: null,
+  comments: 0,
 }));
 
 function ext(path: string | null | undefined, fallback: string) {
@@ -114,6 +124,11 @@ export function rowToMeme(r: any): Meme {
     videoExt: ext(r.video_path, "mp4"),
     audioExt: ext(r.audio_path, "wav"),
     real: true,
+    userId: r.user_id ?? null,
+    username: r.profiles?.username ?? null,
+    displayName: r.profiles?.display_name ?? null,
+    avatar: publicUrl(r.profiles?.avatar_path),
+    comments: r.comments_count ?? 0,
   };
 }
 

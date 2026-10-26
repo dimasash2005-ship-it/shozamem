@@ -54,3 +54,15 @@ export const IconUpload = ({ size = 26 }: P) => (
 export const IconUp = ({ size = 14 }: P) => (
   <svg {...base(size)}><path d="m18 15-6-6-6 6" /></svg>
 );
+export const IconVolumeOff = ({ size = 20 }: P) => (
+  <svg {...base(size)}><path d="M11 5 6 9H2v6h4l5 4V5Z" /><path d="m22 9-6 6" /><path d="m16 9 6 6" /></svg>
+);
+export const IconVolumeOn = ({ size = 20 }: P) => (
+  <svg {...base(size)}><path d="M11 5 6 9H2v6h4l5 4V5Z" /><path d="M15.5 8.5a5 5 0 0 1 0 7" /><path d="M19 5a10 10 0 0 1 0 14" /></svg>
+);
+export const IconCheck = ({ size = 16 }: P) => (
+  <svg {...base(size)} strokeWidth={3}><path d="M20 6 9 17l-5-5" /></svg>
+);
+export const IconFire = ({ size = 18 }: P) => (
+  <svg {...base(size)}><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z" /></svg>
+);

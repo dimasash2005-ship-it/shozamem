@@ -48,7 +48,7 @@ export default async function MemePage({ params }: { params: Promise<{ id: strin
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
         <h1 style={{ margin: 0, fontSize: 22 }}>{meme.title}</h1>
         <span className="muted">
-          {meme.author} · {CATEGORY_LABEL[meme.category]} · {formatDuration(meme.seconds)} · {formatCount(meme.downloads)} завантажень
+          {meme.username ? <Link href={`/u/${meme.username}`} className="link">@{meme.username}</Link> : meme.author} · {CATEGORY_LABEL[meme.category]} · {formatDuration(meme.seconds)} · {formatCount(meme.downloads)} завантажень
         </span>
         {meme.credit && <span className="muted">Автор оригіналу: {meme.credit}</span>}
       </div>

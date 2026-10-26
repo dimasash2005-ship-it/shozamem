@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatDuration, type Meme } from "@/lib/memes";
-import { downloadFile, shareMeme } from "@/lib/actions";
+import type { Meme } from "@/lib/memes";
+import { shareMeme } from "@/lib/actions";
+import DownloadSheet from "./DownloadSheet";
+import CommentsSheet from "./CommentsSheet";
 import { supabaseBrowser } from "@/lib/supabase";
 import { useUser } from "@/lib/useUser";
 import { useToast } from "./Toast";
@@ -57,22 +59,30 @@ export function SaveButton({ meme }: { meme: Meme }) {
 
 export default function MemeActions({ meme }: { meme: Meme }) {
   const toast = useToast();
+  const [dl, setDl] = useState<"video" | "audio" | null>(null);
+  const [comments, setComments] = useState(false);
+  const [count, setCount] = useState(meme.comments);
   return (
     <>
       <div className="grid-2">
-        <button className="btn btn-yellow btn-stack" onClick={() => downloadFile(meme, "video", toast)}>
-          Скачати відео
-          <small>{meme.videoExt.toUpperCase()} · {formatDuration(meme.seconds)}</small>
+        <button className="btn btn-yellow btn-stack" onClick={() => setDl("video")} disabled={!meme.video && meme.real}>
+          Відео
+          <small>переглянути і скачати</small>
         </button>
-        <button className="btn btn-blue btn-stack" onClick={() => downloadFile(meme, "audio", toast)}>
-          Скачати звук
-          <small>{meme.audioExt.toUpperCase()} · {formatDuration(meme.seconds)}</small>
+        <button className="btn btn-blue btn-stack" onClick={() => setDl("audio")} disabled={!meme.audio && meme.real}>
+          Звук
+          <small>послухати і скачати</small>
         </button>
       </div>
+      <button className="btn btn-ghost btn-block" onClick={() => setComments(true)}>
+        Коментарі{count > 0 ? ` · ${count}` : ""}
+      </button>
       <button className="btn btn-ghost btn-block" style={{ borderStyle: "dashed" }} onClick={() => toast("Обличчя на мемі — скоро!")}>
         Зробити свою версію з обличчям
         <span style={{ fontSize: 12, background: "var(--text)", color: "#0e0e10", padding: "3px 10px", borderRadius: 999 }}>Скоро</span>
       </button>
+      <DownloadSheet meme={meme} open={dl !== null} start={dl ?? "video"} onClose={() => setDl(null)} />
+      <CommentsSheet meme={meme} open={comments} onClose={() => setComments(false)} onCount={(_, d) => setCount((c) => c + d)} />
     </>
   );
 }
